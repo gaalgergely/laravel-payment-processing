@@ -8,7 +8,7 @@
                 <div class="card-header">Make a payment</div>
 
                 <div class="card-body">
-                    <form action="#" method="POST" id="paymentFrom">
+                    <form action="{{ route('pay') }}" method="POST" id="paymentFrom">
                         @csrf
                         <div class="row">
                             <div class="col-auto">
@@ -49,7 +49,7 @@
                                                 <input
                                                     type="radio"
                                                     name="payment_platform"
-                                                    id="{{ $PaymentPlatform->id }}"
+                                                    value="{{ $PaymentPlatform->id }}"
                                                     required
                                                 >
                                                 <img src="{{ asset($PaymentPlatform->image) }}" class="img-thumbnail">

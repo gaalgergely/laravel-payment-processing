@@ -20,3 +20,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::middleware('auth')->group(function () {
+    Route::post('payment/pay', 'PaymentContoller@pay')->name('pay');
+    Route::post('payment/approval', 'PaymentContoller@approval')->name('approval');
+    Route::post('payment/cancelled', 'PaymentContoller@cancelled')->name('cancelled');
+});
