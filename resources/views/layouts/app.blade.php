@@ -18,6 +18,8 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    @stack('styles')
 </head>
 <body>
     <div id="app">
@@ -33,7 +35,9 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('home') }}">{{ __('Home') }}</a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -73,8 +77,38 @@
         </nav>
 
         <main class="py-4">
+            <div class="container">
+                @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                        {{ session('status') }}
+                    </div>
+                @endif
+
+                @if(session()->has('success'))
+                    <div class="alert alert-success" role="alert">
+                        <ul>
+                            @foreach(session()->get('success') as $message)
+                                <li>{{ $message }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @if(isset($errors) && $errors->any())
+                    <div class="alert alert-danger" role="alert">
+                        <ul>
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+            </div>
+
             @yield('content')
         </main>
     </div>
+
+    @stack('scripts')
 </body>
 </html>
