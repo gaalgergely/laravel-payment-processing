@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PaymentRequest;
 
-class PaymentContoller extends Controller
+class PaymentController extends Controller
 {
     public function __construct()
     {
