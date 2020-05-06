@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PaymentRequest;
+use App\Services\PayPalService;
 
 class PaymentController extends Controller
 {
@@ -13,12 +14,16 @@ class PaymentController extends Controller
 
     public function pay(PaymentRequest $request)
     {
-        return $request->all();
+        $paymentPlatform = resolve(PayPalService::class);
+
+        return $paymentPlatform->handlePayment($request);
     }
 
     public function approval()
     {
+        $paymentPlatform = resolve(PayPalService::class);
 
+        return $paymentPlatform->handleApproval();
     }
 
     public function cancelled()
