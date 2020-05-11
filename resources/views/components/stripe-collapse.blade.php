@@ -48,8 +48,8 @@
 
         const elements = stripe.elements({ locale: 'en' });
 
-        const card = elements.create('card');
-        card.mount('#cardElement');
+        const cardElement = elements.create('card');
+        cardElement.mount('#cardElement');
     </script>
 
     <script>
@@ -58,7 +58,7 @@
 
         payButton.addEventListener('click', async(e) => {
 
-            if(form.elements.payment_platform.value === "{{ $PaymentPlatform->id }}") {
+            if(form.elements.payment_platform.value === "{{ $paymentPlatform->id }}") {
 
                 e.preventDefault();
 

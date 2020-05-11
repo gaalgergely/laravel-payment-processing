@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PaymentRequest;
 use App\Resolvers\PaymentPlatformResolver;
-use App\Services\PayPalService;
 
 class PaymentController extends Controller
 {
