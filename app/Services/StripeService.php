@@ -47,19 +47,30 @@ class StripeService
 
         $intent = $this->createIntent($request->value, $request->currency, $request->payment_method);
 
-        session()->put('paymentIntend', $intent->id);
+        session()->put('paymentIntendId', $intent->id);
 
         return redirect()->route('approval');
     }
 
-    /**
-     * @return \Illuminate\Http\RedirectResponse
-     *
-     * "/payment/approval?token=6K894567LR1980617&PayerID=763ZQUAKPQ3YY"
-     */
+
     public function handleApproval()
     {
-        //
+        if(session()->has('paymentIntendId')) {
+            $paymentIntendId = session()->get('paymentIntendId');
+
+            $confirmation = $this->confirmPayment($paymentIntendId);
+
+            if($confirmation->status === 'succeeded') {
+                $name = $confirmation->charges->data[0]->billing_details->name;
+                $currency = strtoupper($confirmation->currency);
+                $amount = $confirmation->amount / $this->resolveFactor($currency);
+
+                return redirect()->route('home')->withSuccess([
+                    'payment' => "Thanks, {$name}. We received your {$amount}{$currency} payment."
+                ]);
+            }
+        }
+        return redirect()->route('home')->withErrors('We unable to confirm your payment. Try again later, please!');
     }
 
     public function createIntent($value, $currency, $paymentMethod)

@@ -48,7 +48,7 @@
 
         const elements = stripe.elements({ locale: 'en' });
 
-        const cardElement = elements.create('card');
+        const cardElement = elements.create('card', { hidePostalCode : true });
         cardElement.mount('#cardElement');
     </script>
 
@@ -70,6 +70,11 @@
                         }
                     }
                 );
+
+                /**
+                 * @see https://stackoverflow.com/questions/46737413/stripe-elements-forcing-a-postal-code
+                 * @see https://groups.google.com/a/lists.stripe.com/forum/#!topic/api-discuss/Jbs92EXySfY
+                 */
 
                 if(error) {
                     const displayError = document.getElementById('cardErrors');
