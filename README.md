@@ -1,79 +1,54 @@
-<p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
+# Laravel Payment Processing Demo
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+This project is a Laravel 7 demo that showcases multi-platform payment processing. Authenticated users can submit payments in multiple currencies and complete them through PayPal or Stripe with provider-specific approval flows.
 
-## About Laravel
+## Features
+- Dashboard with authenticated payment form for entering amount, currency, and payment platform.
+- Dynamic UI that reveals platform-specific inputs (Stripe card widget, PayPal notice) based on the selected provider.
+- PayPal integration: creates orders, redirects for approval, and captures the transaction after the user returns.
+- Stripe integration: creates and confirms PaymentIntents, including a dedicated 3D Secure/Strong Customer Authentication step when required.
+- Currency and payment platform records seeded for quick setup across USD, EUR, GBP, and JPY.
+- Simple flash-message feedback for successful payments and graceful fallbacks for cancel/error states.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Architecture overview
+- **Controllers**: `HomeController` renders the dashboard with available currencies and platforms; `PaymentController` handles pay/approval/cancel endpoints and delegates to platform services.
+- **Resolver**: `PaymentPlatformResolver` maps a platform ID to a service class defined in `config/services.php`, enabling polymorphic payment handling.
+- **Services**: `PayPalService` and `StripeService` encapsulate provider-specific API calls and approval logic, both using the shared `ConsumesExternalServices` trait for authenticated HTTP requests.
+- **Models**: `Currency` and `PaymentPlatform` back the selectable options in the UI and are populated via migrations/seeders.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Getting started
+1. **Install dependencies**
+   ```bash
+   composer install
+   npm install && npm run dev
+   ```
+2. **Configure environment**
+   - Copy `.env.example` to `.env` and set your database credentials.
+   - Add your payment credentials:
+     ```env
+     PAYPAL_BASE_URI=https://api-m.sandbox.paypal.com
+     PAYPAL_CLIENT_ID=your-client-id
+     PAYPAL_CLIENT_SECRET=your-client-secret
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+     STRIPE_BASE_URI=https://api.stripe.com
+     STRIPE_KEY=pk_test_xxx
+     STRIPE_SECRET=sk_test_xxx
+     ```
+3. **Generate app key and run migrations/seeders**
+   ```bash
+   php artisan key:generate
+   php artisan migrate --seed
+   ```
+4. **Serve the app**
+   ```bash
+   php artisan serve
+   ```
+   Register/login, then submit a payment using the provided form.
 
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
-- [Appoly](https://www.appoly.co.uk)
-- [OP.GG](https://op.gg)
-- [云软科技](http://www.yunruan.ltd/)
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Extending the demo
+- Add a new provider by creating a service class with `handlePayment` and `handleApproval` methods, registering it under `config/services.php`, and seeding a matching `PaymentPlatform` entry.
+- Implement webhooks for asynchronous events (e.g., refunds, chargebacks) to complement the controller-based approval flow.
+- Enhance UX with richer error messaging, loading states during payment submission, or currency-specific validation rules.
 
 ## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This demo is open-sourced software licensed under the [MIT license](LICENSE).
